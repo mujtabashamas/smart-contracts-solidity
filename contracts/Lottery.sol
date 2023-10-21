@@ -21,4 +21,22 @@ contract Lottery {
         require(msg.sender == manager);
         return address(this).balance;
     }
-}
+
+    function random() public view returns(uint){
+        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players.length)));
+    }
+
+    function pickWinner() public{
+        require(msg.sender == manager);
+        require(players.length >= 3);
+
+        uint r = random();
+        address payable winner;
+
+        uint index = r % players.length;
+        winner = players[index];
+
+        winner.transfer(getBalance());
+        players = new address payable[](0);
+    }
+} 
