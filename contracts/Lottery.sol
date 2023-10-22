@@ -13,7 +13,7 @@ contract Lottery {
     }
 
     receive() external payable{
-        require(msg.value == 0.1 ether);
+        require(msg.value == 0.1 ether, "You need to send 0.1 ether");
         players.push(payable(msg.sender));
     }
 
@@ -27,7 +27,7 @@ contract Lottery {
     }
 
     function pickWinner() public{
-        require(msg.sender == manager);
+        require(msg.sender == manager, "Only the manager can pick a winner");
         require(players.length >= 3);
 
         uint r = random();
