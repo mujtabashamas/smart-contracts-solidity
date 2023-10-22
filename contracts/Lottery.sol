@@ -10,6 +10,7 @@ contract Lottery {
 
     constructor() {
         manager = msg.sender;
+        players.push(payable(manager));
     }
 
     receive() external payable{
@@ -27,14 +28,17 @@ contract Lottery {
     }
 
     function pickWinner() public{
-        require(msg.sender == manager, "Only the manager can pick a winner");
-        require(players.length >= 3);
+        require(players.length >= 10, "Not enough players");
 
         uint r = random();
         address payable winner;
 
         uint index = r % players.length;
         winner = players[index];
+
+        // manager receives a fee of 10% of the lottery funds.
+        uint managerFee = getBalance() / 10;
+        payable(manager).transfer(managerFee);
 
         winner.transfer(getBalance());
         players = new address payable[](0);
